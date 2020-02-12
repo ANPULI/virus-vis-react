@@ -20,7 +20,7 @@ function convertData(data) {
       geoCoord = geoCoordMap[province];
     }
     if (geoCoord) {
-      let value = data[i].value;
+      let value = data[i].value.slice();
       if (value.length === 2) { value.push(0); }
       res.push({
           name: province,
@@ -47,7 +47,7 @@ function Map(props) {
   const getOption = (data) => {
     return ({
       title: {
-        text: "内地新冠肺炎疫情实时动态",
+        text: "新冠肺炎疫情内地实时动态",
         subtext: formattedSubtext(),
         sublink: "https://zh.wikipedia.org/wiki/%E6%96%B0%E5%9E%8B%E5%86%A0%E7%8B%80%E7%97%85%E6%AF%92%E8%82%BA%E7%82%8E%E4%B8%AD%E5%9C%8B%E5%A4%A7%E9%99%B8%E7%96%AB%E6%83%85%E7%97%85%E4%BE%8B",
         left: "center",
