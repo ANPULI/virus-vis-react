@@ -1,5 +1,8 @@
+.echarts-for-react {
+    margin: auto
+}
 .map-chart {
-    height: 70vw !important;
+    height: 75vw !important;
     width: 95vw;
     background-color: whitesmoke;
     border-radius: 3%;

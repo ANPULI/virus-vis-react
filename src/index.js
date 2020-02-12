@@ -49,7 +49,7 @@ function Map(props) {
   const getOption = (data) => {
     return ({
       title: {
-        text: "全国新型肺炎疫情实时动态",
+        text: "内地新冠肺炎疫情实时动态",
         subtext: formattedSubtext(),
         sublink: "https://zh.wikipedia.org/wiki/%E6%96%B0%E5%9E%8B%E5%86%A0%E7%8B%80%E7%97%85%E6%AF%92%E8%82%BA%E7%82%8E%E4%B8%AD%E5%9C%8B%E5%A4%A7%E9%99%B8%E7%96%AB%E6%83%85%E7%97%85%E4%BE%8B",
         left: "center",
@@ -62,14 +62,25 @@ function Map(props) {
       visualMap: {
         type: 'piecewise',
         min: 0,
-        max: 1000,
+        max: 10000,
         maxOpen: true,
         left: 'left',
         realtime: true,
         calculable: true,
+        itemWidth: 9,
+        itemHeight: 9,
+        itemGap: 3,
         inRange: {
-          color: ['#FFF6CE', '#FFD20A', '#EA3300', '#8B0000']
+          color: ['#F8D199', '#FFD20A', '#EA3300', '#8B0000'],
+          symbol: 'circle',
         },
+        pieces: [
+          {gte: 10000},
+          {gte: 1000, lte: 9999},
+          {gte: 500, lte: 999},
+          {gte: 100, lte: 499},
+          {gte: 1, lte: 99},
+        ],
       },
       toolbox: {
         show: true,
@@ -88,13 +99,17 @@ function Map(props) {
           zoom: 1.2,
           label: {
             normal: {
-              show: true
+              show: true,
+              fontFamily: 'STHeiti',
             },
             emphasis: {
               show: true
-            }
+            },
+            fontFamily: 'STHeiti',
           },
           itemStyle: {
+            borderColor: 'darkgray',
+            // borderWidth: 1,
             emphasis: {
               areaColor: 'skyblue',
               show: true
@@ -134,67 +149,61 @@ function Line(props) {
     }
     return ({
       title: {
-        text: `全国疫情${(type === 'new') ? '新增' : '累计'}趋势图`,
-        left: "center"
+        text: `${(type === 'new') ? '每日新增' : '全国累计'}`,
+        left: "left",
+        textStyle: {
+          fontWeight: 'bold',
+          fontSize: 14,
+          fontFamily: 'Microsoft Yahei',
+        }
       },
       tooltip: {
           trigger: 'axis',
           showDelay: 0,
           transitionDuration: 0.2
       },
-      toolbox: {
-          show: true,
-          //orient: 'vertical',
-          right: '3%',
-          top: 'top',
-          feature: {
-              saveAsImage: {}
-          }
-      },
       legend: {
-          data: ['确诊', '死亡', '治愈'],
-          orient: 'horizontal',
-          left: 'center',
-          top: '5%'
+        data: ['确诊', '死亡', '治愈'],
+        orient: 'horizontal',
+        left: 'right',
+        top: 'top',
+        itemHeight: 9,
+        itemGap: 3,
       },
       series: [{
-              name: '确诊',
-              type: 'line',
-              data: getData('确诊', type)
-          },
-          {
-              name: '死亡',
-              type: 'line',
-              yAxisIndex: 1,
-              data: getData('死亡', type)
-          },
-          {
-              name: '治愈',
-              type: 'line',
-              yAxisIndex: 1,
-              data: getData('治愈', type)
-          }
-      ],
+        name: '确诊',
+        type: 'line',
+        yAxisIndex: 1,
+        data: getData('确诊', type)
+      }, {
+        name: '死亡',
+        type: 'line',
+        data: getData('死亡', type)
+      }, {
+        name: '治愈',
+        type: 'line',
+        data: getData('治愈', type)
+      }],
       grid: {
-          left: '3%',
-          right: '3%',
-          bottom: '3%',
-          containLabel: true
+        left: '3%',
+        right: '3%',
+        bottom: '3%',
+        containLabel: true
       },
       xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: (data === null) ? data : data.日期.slice(0, -1)
+        type: 'category',
+        boundaryGap: false,
+        data: (data === null) ? data : data.日期.slice(0, -1)
       },
       yAxis: [{
-          name: '确诊',
-          type: 'value'
+        name: '死亡/治愈',
+        type: 'value',
+        splitLine: {show: false},
+        max: function (value) {return Math.ceil(value.max / 60) * 100}
       }, {
-          name: '死亡/治愈',
-          type: 'value',
-          splitLine: {show: false},
-          max: function (value) {return Math.ceil(value.max / 60) * 100}
-      }]
+        name: '确诊',
+        type: 'value'
+      },]
     });
   };
 
@@ -240,11 +249,11 @@ class Charts extends React.Component {
     return ( 
       <div className="charts">
         <div className="parent">
-          <label> Map Chart </label>
+          {/* <label> Map Chart </label> */}
           <Map data={dataMap} />
-          <label> Line Chart 1</label>
+          {/* <label> Line Chart 1</label> */}
           <Line data={dataLine} type={"acc"}/>
-          <label> Line Chart 2</label>
+          {/* <label> Line Chart 2</label> */}
           <Line data={dataLine} type={"new"}/>
         </div>
       </div>
