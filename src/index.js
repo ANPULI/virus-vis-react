@@ -224,6 +224,7 @@ class Charts extends React.Component {
   fetchData = () => {
     fetch(url).then(response => response.json()).then(data => {
       this.setState({data: data});
+      sessionStorage.setItem('data', JSON.stringify(data));
     });
   }
 
@@ -231,7 +232,12 @@ class Charts extends React.Component {
     if (this.timeTicket) {
       clearInterval(this.timeTicket);
     }
-    this.fetchData();
+    let data = sessionStorage.getItem('data');
+    if (!data) {
+      this.fetchData();
+    } else {
+      this.setState({data: JSON.parse(data)});
+    }
     this.timeTicket = setInterval(() => {
       this.fetchData();
     }, 1000*60*30);
