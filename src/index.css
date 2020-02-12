@@ -1,0 +1,11 @@
+.map-chart {
+    height: 70vw !important;
+    width: 95vw;
+    background-color: whitesmoke;
+    border-radius: 3%;
+}
+
+.line-chart-acc, .line-chart-new {
+    height: 50vw !important;
+    width: 95vw;
+}

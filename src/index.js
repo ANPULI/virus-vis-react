@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactEcharts from 'echarts-for-react';  // or var ReactEcharts = require('echarts-for-react');
 import geoCoordMap from './assets/geoCoordCity.json'
+import './index.css'
 require('echarts/map/js/china')
 
 const url = "https://virus-spider.now.sh/api";
@@ -12,18 +13,20 @@ function convertData(data) {
   }
   var res = [];
   for (var i = 0; i < data.length; i++) {
-      var province = data[i].name.slice(0, 2)
-      var geoCoord = geoCoordMap[province];
-      if (!geoCoord) {
-          province = data[i].name.slice(0, 3)
-          geoCoord = geoCoordMap[province];
-      }
-      if (geoCoord) {
-          res.push({
-              name: province,
-              value: geoCoord.concat(data[i].value.reverse())
-          });
-      }
+    var province = data[i].name.slice(0, 2)
+    var geoCoord = geoCoordMap[province];
+    if (!geoCoord) {
+      province = data[i].name.slice(0, 3)
+      geoCoord = geoCoordMap[province];
+    }
+    if (geoCoord) {
+      let value = data[i].value;
+      if (value.length === 2) { value.push(0); }
+      res.push({
+          name: province,
+          value: geoCoord.concat(value.reverse())
+      });
+    }
   }
   console.log(res)
   return res;
@@ -54,22 +57,18 @@ function Map(props) {
       tooltip: {
         trigger: 'item',
         showDelay: 0,
-        transitionDuration: 0.2,
-        formatter: function (params) {
-          if (params.data === undefined) { return undefined; }
-          const value = params.data.value;
-          return `${params.seriesName} - <em>${params.name}</em><br />确诊: ${value[4]}<br/>死亡: ${value[3]}<br/>治愈: ${value[2]}`;
-        },
+        transitionDuration: 0.2
       },
       visualMap: {
+        type: 'piecewise',
         min: 0,
         max: 1000,
-        text: ['High', 'Low'],
-        left: 'right',
+        maxOpen: true,
+        left: 'left',
         realtime: true,
         calculable: true,
         inRange: {
-          color: ['#FFFFFF', '#FFF6CE', '#FFD20A', '#EA3300', '#8B0000']
+          color: ['#FFF6CE', '#FFD20A', '#EA3300', '#8B0000']
         },
       },
       toolbox: {
@@ -85,13 +84,13 @@ function Map(props) {
           name: '影响人数',
           type: 'map',
           mapType: 'china',
-          roam: true,
+          roam: false,
+          zoom: 1.2,
           label: {
             normal: {
               show: true
             },
             emphasis: {
-              areaColor: 'skyblue',
               show: true
             }
           },
@@ -101,8 +100,19 @@ function Map(props) {
               show: true
             }
           },
-          aspectScale: 0.85,
-          data: data
+          data: data,
+          tooltip: {
+            formatter: function (params) {
+              if (params.data === undefined) { return undefined; }
+              const value = params.data.value;
+              return (
+                `<b>${params.name}</b>
+                <br /> - 确诊：${value[4]}
+                <br /> - 死亡：${value[3]}
+                <br /> - 治愈：${value[2]}`
+              );
+            },
+          }
         }
       ]
     });
@@ -111,8 +121,7 @@ function Map(props) {
   return (
     <ReactEcharts
       option={getOption(convertData(props.data))}
-      style={{height: '500px', width: '1000px'}}
-      className='map_chart' />
+      className='map-chart' />
   );
 }
 
@@ -175,7 +184,7 @@ function Line(props) {
       xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: (data === null) ? data : data.日期
+          data: (data === null) ? data : data.日期.slice(0, -1)
       },
       yAxis: [{
           name: '确诊',
@@ -192,8 +201,7 @@ function Line(props) {
   return (
     <ReactEcharts
       option={getOption(props.data, props.type)}
-      style={{height: '500px', width: '1000px'}}
-      className={props.name} />
+      className={"line-chart-" + props.type} />
   )
 }
 
@@ -235,9 +243,9 @@ class Charts extends React.Component {
           <label> Map Chart </label>
           <Map data={dataMap} />
           <label> Line Chart 1</label>
-          <Line data={dataLine} type={"acc"} name={"line_chart_acc"}/>
+          <Line data={dataLine} type={"acc"}/>
           <label> Line Chart 2</label>
-          <Line data={dataLine} type={"new"} name={"line_chart_new"}/>
+          <Line data={dataLine} type={"new"}/>
         </div>
       </div>
     );
