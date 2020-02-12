@@ -28,13 +28,11 @@ function convertData(data) {
       });
     }
   }
-  console.log(res)
   return res;
 }
 
 function getAccData(data) {
   if (data === null) { return null; }
-  console.log(data)
   let res = data.slice(0, 1);
   for (let i = 1; i < data.length; i++) {
     res.push(res[res.length - 1] + data[i]);
