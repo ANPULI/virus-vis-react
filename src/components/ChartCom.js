@@ -41,16 +41,16 @@ function getAccData(data) {
 
 function Map(props) {
 
-  const formattedSubtext = () => "数据来源：维基百科 | " + new Date().toLocaleString('zh').slice(0, -3);
+  const formattedSubtext = () => "" + new Date().toLocaleString('zh').slice(0, -3);
 
   const getOption = (data) => {
     return ({
-      title: {
-        text: "新冠肺炎疫情内地实时动态",
-        subtext: formattedSubtext(),
-        sublink: "https://zh.wikipedia.org/wiki/%E6%96%B0%E5%9E%8B%E5%86%A0%E7%8B%80%E7%97%85%E6%AF%92%E8%82%BA%E7%82%8E%E4%B8%AD%E5%9C%8B%E5%A4%A7%E9%99%B8%E7%96%AB%E6%83%85%E7%97%85%E4%BE%8B",
-        left: "center",
-      },
+      // title: {
+      //   text: "疫情地图",
+      //   subtext: formattedSubtext(),
+      //   sublink: "https://zh.wikipedia.org/wiki/%E6%96%B0%E5%9E%8B%E5%86%A0%E7%8B%80%E7%97%85%E6%AF%92%E8%82%BA%E7%82%8E%E4%B8%AD%E5%9C%8B%E5%A4%A7%E9%99%B8%E7%96%AB%E6%83%85%E7%97%85%E4%BE%8B",
+      //   left: "center",
+      // },
       tooltip: {
         trigger: 'item',
         showDelay: 0,
@@ -80,7 +80,7 @@ function Map(props) {
         ],
       },
       toolbox: {
-        show: true,
+        show: false,
         left: 'left',
         top: 'top',
         feature: {
