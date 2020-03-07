@@ -4,8 +4,6 @@ import geoCoordMap from '../assets/geoCoordCity.json'
 import '../assets/css/ChartCom.css'
 require('echarts/map/js/china')
 
-const url = "https://virus-spider.now.sh/api";
-
 function convertData(data) {
   if (data === null) {
     return null;
@@ -20,7 +18,6 @@ function convertData(data) {
     }
     if (geoCoord) {
       let value = data[i].value.slice();
-      if (value.length === 2) { value.push(0); }
       res.push({
           name: province,
           value: geoCoord.concat(value.reverse())
@@ -214,41 +211,11 @@ function Line(props) {
 class ChartCom extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {data: null};
   }
-  timeTicket = null;
-
-  fetchData = () => {
-    fetch(url).then(response => response.json()).then(data => {
-      this.setState({data: data});
-      sessionStorage.setItem('data', JSON.stringify(data));
-    });
-  }
-
-  componentDidMount() {
-    if (this.timeTicket) {
-      clearInterval(this.timeTicket);
-    }
-    let data = sessionStorage.getItem('data');
-    if (!data) {
-      this.fetchData();
-    } else {
-      this.setState({data: JSON.parse(data)});
-    }
-    this.timeTicket = setInterval(() => {
-      this.fetchData();
-    }, 1000*60*30);
-  };
-
-  componentWillUnmount() {
-    if (this.timeTicket) {
-      clearInterval(this.timeTicket);
-    }
-  };
 
   render() {
-    const dataMap = (this.state.data === null) ? null : this.state.data.省级.累计;
-    const dataLine = (this.state.data === null) ? null : this.state.data.每日;
+    const dataMap = (this.props.data === null) ? null : this.props.data.省级.累计;
+    const dataLine = (this.props.data === null) ? null : this.props.data.每日;
     return ( 
       <div className="charts">
         <div className="parent">
